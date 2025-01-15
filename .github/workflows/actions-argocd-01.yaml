@@ -1,0 +1,27 @@
+name: App With Github Actions with ArgoCD Bas
+on:
+  # workflow_dispatch
+  push
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: HIRedrain/lion-app-with-argocd-basic
+        ref: main
+        token: ${{ secrets.TOKEN }}
+        
+    - name: Set up Image
+      run: |
+        sed -i "s%image: nginx:1.25%image: nginx:latest%" ./argocd-deployment.yaml
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "${{ secrets.EMAIL }}"
+        git config --local user.name "HIRedrain"
+        git add .
+        git commit -m "Update nginx image to latest"
+        git push
